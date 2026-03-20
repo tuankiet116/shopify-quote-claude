@@ -1,0 +1,29 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.0.0",
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "@types/react-router-dom": "^5.3.3",
+        "axios": "^1.11.0",
+        "concurrently": "^9.0.1",
+        "tailwindcss": "^4.0.0",
+        "typescript": "^5.9.3",
+        "vite": "^8.0.0"
+    },
+    "dependencies": {
+        "@shopify/app-bridge-react": "^4.2.10",
+        "@shopify/polaris": "^13.9.5",
+        "@shopify/polaris-icons": "^9.3.1",
+        "@vitejs/plugin-react": "^6.0.1",
+        "react": "^19.2.4",
+        "react-dom": "^19.2.4",
+        "react-router-dom": "^7.13.1"
+    }
+}

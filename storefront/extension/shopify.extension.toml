@@ -1,0 +1,14 @@
+api_version = "2025-07"
+
+[[extensions]]
+type = "theme"
+name = "Quote Storefront"
+handle = "quote-storefront"
+
+  [[extensions.blocks]]
+  type = "quote-embed"
+  name = "Quote App"
+  target = "body"
+
+    [extensions.blocks.default]
+    enabled = true
