@@ -20,11 +20,26 @@ self-documenting code.
 
 ### Placement
 
-- **In Service directory** — for DTOs used by one service: `app/Services/QuoteData.php`
-- **In Domain directory** — for important, shared DTOs: `app/DTOs/QuoteData.php`
+DTOs live inside the service domain subfolder that owns them:
 
-Use the simpler placement (service directory) by default. Promote to `app/DTOs/`
-only when the DTO is used across multiple services or domains.
+```
+app/Services/
+├── Quote/
+│   ├── DTOs/
+│   │   └── QuoteData.php       # namespace App\Services\Quote\DTOs
+│   ├── QuoteNumberService.php
+│   └── QuoteAutomationService.php
+├── FormConfig/
+│   ├── DTOs/
+│   │   └── FormConfigData.php  # if needed later
+│   └── QuoteFormConfigService.php
+└── Shopify/
+    └── ...
+```
+
+This keeps DTOs co-located with the service that uses them, avoiding a
+top-level `app/DTOs/` folder that grows into an unorganized dumping ground
+as the project scales.
 
 ### Implementation
 

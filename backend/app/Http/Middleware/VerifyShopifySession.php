@@ -6,48 +6,104 @@ use App\Models\Shop;
 use App\Services\Shopify\ShopifyAuthService;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class VerifyShopifySession
 {
-    public function __construct(private ShopifyAuthService $authService)
-    {
-    }
+    public function __construct(private ShopifyAuthService $authService) {}
 
     public function handle(Request $request, Closure $next): Response
     {
+        // Developer mode: bypass Shopify JWT verification
+        if ($this->isDeveloperMode($request)) {
+            return $this->handleDeveloperMode($request, $next);
+        }
+
         $token = $request->bearerToken() ?? $request->query('id_token');
 
-        if (!$token) {
-            return response()->json(['error' => 'missing_session_token'], 401);
+        if (! $token) {
+            Log::debug('Missing session token', ['url' => $request->fullUrl()]);
+
+            return response()->json([
+                'success' => false,
+                'error' => ['code' => 'missing_session_token', 'message' => 'Session token is required.'],
+            ], 401);
         }
 
         try {
             $payload = $this->authService->decodeSessionToken($token);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'invalid_session_token', 'message' => $e->getMessage()], 401);
+            Log::warning('Invalid session token', ['message' => $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'error' => ['code' => 'invalid_session_token', 'message' => $e->getMessage()],
+            ], 401);
         }
 
         $shopDomain = $this->authService->extractShopDomain($payload['dest']);
 
-        $shop = Shop::where('shopify_domain', $shopDomain)->first();
+        $shop = Shop::where('shop', $shopDomain)->first();
 
-        if (!$shop || !$shop->access_token) {
+        if (! $shop || ! $shop->access_token) {
             try {
                 $tokenData = $this->authService->exchangeSessionTokenForAccessToken($shopDomain, $token);
                 $shop = Shop::updateOrCreate(
-                    ['shopify_domain' => $shopDomain],
+                    ['shop' => $shopDomain],
                     [
                         'access_token' => $tokenData['access_token'],
-                        'scopes' => $tokenData['scope'] ?? config('shopify.scopes'),
                         'is_active' => true,
                         'installed_at' => $shop?->installed_at ?? now(),
                     ]
                 );
+
+                Log::info('Shop authenticated via token exchange', ['shop' => $shopDomain]);
             } catch (\Exception $e) {
-                return response()->json(['error' => 'token_exchange_failed', 'message' => $e->getMessage()], 401);
+                Log::error('Token exchange failed', [
+                    'shop' => $shopDomain,
+                    'message' => $e->getMessage(),
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'error' => ['code' => 'token_exchange_failed', 'message' => $e->getMessage()],
+                ], 401);
             }
         }
+
+        $request->attributes->set('shopifyShop', $shop);
+        $request->attributes->set('shopifyDomain', $shopDomain);
+
+        return $next($request);
+    }
+
+    private function isDeveloperMode(Request $request): bool
+    {
+        if (app()->environment('production')) {
+            return false;
+        }
+
+        return $request->query('scope') === 'developer';
+    }
+
+    private function handleDeveloperMode(Request $request, Closure $next): Response
+    {
+        $shopDomain = config('shopify.dev_shop_domain');
+
+        if (! $shopDomain) {
+            return response()->json([
+                'success' => false,
+                'error' => ['code' => 'dev_config_error', 'message' => 'SHOPIFY_DEV_SHOP_DOMAIN is not configured.'],
+            ], 500);
+        }
+
+        $shop = Shop::firstOrCreate(
+            ['shop' => $shopDomain],
+            ['is_active' => true, 'installed_at' => now()]
+        );
+
+        Log::debug('Developer mode active', ['shop' => $shopDomain]);
 
         $request->attributes->set('shopifyShop', $shop);
         $request->attributes->set('shopifyDomain', $shopDomain);

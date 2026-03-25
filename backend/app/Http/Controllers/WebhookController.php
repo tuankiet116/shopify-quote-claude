@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Quote;
-use App\Models\QuoteActivity;
 use App\Models\Shop;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class WebhookController extends Controller
 {
@@ -14,60 +13,30 @@ class WebhookController extends Controller
     {
         $topic = $request->attributes->get('webhookTopic');
         $shopDomain = $request->attributes->get('shopifyDomain');
-        $data = $request->all();
+
+        Log::info('Webhook received', ['topic' => $topic, 'shop' => $shopDomain]);
 
         match ($topic) {
-            'orders/create' => $this->handleOrderCreate($shopDomain, $data),
             'app/uninstalled' => $this->handleAppUninstalled($shopDomain),
-            default => null,
+            default => Log::warning('Unhandled webhook topic', ['topic' => $topic]),
         };
 
-        return response()->json(['status' => 'ok']);
-    }
-
-    private function handleOrderCreate(string $shopDomain, array $data): void
-    {
-        $shop = Shop::where('shopify_domain', $shopDomain)->first();
-        if (!$shop) return;
-
-        // Check if order came from a draft order linked to a quote
-        $draftOrderId = $data['draft_order_id'] ?? null;
-        if (!$draftOrderId) return;
-
-        $draftOrderGid = "gid://shopify/DraftOrder/{$draftOrderId}";
-        $orderId = $data['id'] ?? null;
-        $orderGid = $orderId ? "gid://shopify/Order/{$orderId}" : null;
-
-        $quote = Quote::where('shop_id', $shop->id)
-            ->where('draft_order_gid', $draftOrderGid)
-            ->first();
-
-        if ($quote) {
-            $quote->update([
-                'status' => 'converted',
-                'converted_at' => now(),
-                'order_gid' => $orderGid,
-            ]);
-
-            QuoteActivity::create([
-                'quote_id' => $quote->id,
-                'action' => 'status_changed',
-                'details' => ['from' => 'sent', 'to' => 'converted', 'order_gid' => $orderGid],
-                'actor' => 'system',
-                'created_at' => now(),
-            ]);
-        }
+        return $this->success(message: 'Webhook processed');
     }
 
     private function handleAppUninstalled(string $shopDomain): void
     {
-        $shop = Shop::where('shopify_domain', $shopDomain)->first();
-        if (!$shop) return;
+        $shop = Shop::where('shop', $shopDomain)->first();
+        if (! $shop) {
+            return;
+        }
 
         $shop->update([
             'is_active' => false,
             'access_token' => null,
             'uninstalled_at' => now(),
         ]);
+
+        Log::info('App uninstalled', ['shop' => $shopDomain]);
     }
 }

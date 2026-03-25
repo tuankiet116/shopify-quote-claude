@@ -1,0 +1,18 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "not_operator_with_successor_space": false,
+        "single_quote": false,
+        "binary_operator_spaces": {
+            "operators": {
+                "=": "align_single_space_minimal",
+                "=>": "align_single_space_minimal"
+            }
+        }
+    },
+    "exclude": [
+        "database",
+        "config",
+        "tests"
+    ]
+}

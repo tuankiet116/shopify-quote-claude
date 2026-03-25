@@ -13,7 +13,6 @@ tags: quality, conventions
 app/
 ├── Actions/              # Single-responsibility operations
 │   └── Quote/
-├── DTOs/                 # Shared data objects (or keep in Services/)
 ├── Exceptions/           # Custom exceptions
 ├── Http/
 │   ├── Controllers/      # Thin, delegate to services/actions
@@ -21,8 +20,15 @@ app/
 │   ├── Requests/         # FormRequest validation
 │   └── Resources/        # API response formatting
 ├── Models/               # Eloquent models
-├── Services/             # Business logic (can contain DTOs)
-│   └── Shopify/          # Group by domain
+├── Repositories/         # Database queries
+├── Services/             # Business logic, grouped by domain
+│   ├── Quote/
+│   │   ├── DTOs/         # DTOs co-located with their service
+│   │   ├── QuoteNumberService.php
+│   │   └── QuoteAutomationService.php
+│   ├── Dashboard/
+│   ├── FormConfig/
+│   └── Shopify/
 └── Console/Commands/     # Artisan commands
 ```
 

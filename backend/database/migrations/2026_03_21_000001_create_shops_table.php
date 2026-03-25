@@ -10,9 +10,8 @@ return new class extends Migration
     {
         Schema::create('shops', function (Blueprint $table) {
             $table->id();
-            $table->string('shopify_domain')->unique();
+            $table->string('shop')->unique();
             $table->text('access_token')->nullable();
-            $table->string('scopes', 500)->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamp('installed_at')->nullable();
             $table->timestamp('uninstalled_at')->nullable();

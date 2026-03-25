@@ -9,9 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class VerifyShopifyWebhook
 {
-    public function __construct(private ShopifyAuthService $authService)
-    {
-    }
+    public function __construct(private ShopifyAuthService $authService) {}
 
     public function handle(Request $request, Closure $next): Response
     {
