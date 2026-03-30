@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quote App (Dev)</title>
     <script>
         // Mock shopify global for local dev without Shopify embed
-        if (!window.shopify) {
-            window.shopify = {
+        if (!globalThis.shopify) {
+            globalThis.shopify = {
                 idToken: () => Promise.resolve('dev-token'),
             };
         }
@@ -15,6 +15,6 @@
 </head>
 <body>
     <div id="app"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
 </body>
 </html>

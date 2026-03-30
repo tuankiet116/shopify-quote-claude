@@ -7,12 +7,13 @@
     <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
     @if(app()->environment('local'))
         <script type="module">
-            import RefreshRuntime from '/build/@@vite/client';
+            import RefreshRuntime from '/build/@@react-refresh';
             RefreshRuntime.injectIntoGlobalHook(window);
             window.$RefreshReg$ = () => {};
             window.$RefreshSig$ = () => (type) => type;
             window.__vite_plugin_react_preamble_installed__ = true;
         </script>
+        <script type="module" src="/build/@@vite/client"></script>
         <script type="module" src="/build/src/main.tsx"></script>
     @else
         @php
