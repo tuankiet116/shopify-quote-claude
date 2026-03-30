@@ -1,0 +1,20 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "1ca9359d26e9fc0fc76367b6bb8feb40"
+name = "Claude Quote AI"
+application_url = "https://quote-claude.local"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-07"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/api/webhooks"
+
+[access_scopes]
+scopes = "read_products,write_draft_orders"
+

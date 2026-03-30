@@ -20,11 +20,9 @@ class VerifyShopifySession
             return $this->handleDeveloperMode($request, $next);
         }
 
-        $token = $request->bearerToken() ?? $request->query('id_token');
+        $token = $request->bearerToken();
 
         if (! $token) {
-            Log::debug('Missing session token', ['url' => $request->fullUrl()]);
-
             return response()->json([
                 'success' => false,
                 'error' => ['code' => 'missing_session_token', 'message' => 'Session token is required.'],
@@ -34,8 +32,6 @@ class VerifyShopifySession
         try {
             $payload = $this->authService->decodeSessionToken($token);
         } catch (\Exception $e) {
-            Log::warning('Invalid session token', ['message' => $e->getMessage()]);
-
             return response()->json([
                 'success' => false,
                 'error' => ['code' => 'invalid_session_token', 'message' => $e->getMessage()],
@@ -43,33 +39,13 @@ class VerifyShopifySession
         }
 
         $shopDomain = $this->authService->extractShopDomain($payload['dest']);
-
-        $shop = Shop::where('shop', $shopDomain)->first();
+        $shop = Shop::where('shop', $shopDomain)->where('is_active', true)->first();
 
         if (! $shop || ! $shop->access_token) {
-            try {
-                $tokenData = $this->authService->exchangeSessionTokenForAccessToken($shopDomain, $token);
-                $shop = Shop::updateOrCreate(
-                    ['shop' => $shopDomain],
-                    [
-                        'access_token' => $tokenData['access_token'],
-                        'is_active' => true,
-                        'installed_at' => $shop?->installed_at ?? now(),
-                    ]
-                );
-
-                Log::info('Shop authenticated via token exchange', ['shop' => $shopDomain]);
-            } catch (\Exception $e) {
-                Log::error('Token exchange failed', [
-                    'shop' => $shopDomain,
-                    'message' => $e->getMessage(),
-                ]);
-
-                return response()->json([
-                    'success' => false,
-                    'error' => ['code' => 'token_exchange_failed', 'message' => $e->getMessage()],
-                ], 401);
-            }
+            return response()->json([
+                'success' => false,
+                'error' => ['code' => 'shop_not_installed', 'message' => 'App is not installed for this shop.'],
+            ], 401);
         }
 
         $request->attributes->set('shopifyShop', $shop);
@@ -102,8 +78,6 @@ class VerifyShopifySession
             ['shop' => $shopDomain],
             ['is_active' => true, 'installed_at' => now()]
         );
-
-        Log::debug('Developer mode active', ['shop' => $shopDomain]);
 
         $request->attributes->set('shopifyShop', $shop);
         $request->attributes->set('shopifyDomain', $shopDomain);

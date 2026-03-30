@@ -1,38 +1,11 @@
 {% comment %}
-  Quote App Embed Block
-  Reads settings from metafields and injects as global JS config.
-  All rendering done by JavaScript.
+  Placeholder for future storefront extension block.
 {% endcomment %}
 
-<script>
-  window.__QUOTE_APP__ = {
-    shopDomain: {{ shop.permanent_domain | json }},
-    proxyPath: "/apps/quote",
-    buttonSettings: {{ shop.metafields.app.quote_button_settings.value | default: '{}' }},
-    formConfig: {{ shop.metafields.app.quote_form_config.value | default: '{}' }},
-    cartSettings: {{ shop.metafields.app.quote_cart_settings.value | default: '{}' }},
-    currentPage: {{ request.page_type | json }},
-    product: {% if request.page_type == 'product' %}{
-      id: {{ product.id | json }},
-      title: {{ product.title | json }},
-      handle: {{ product.handle | json }},
-      image: {{ product.featured_image | image_url: width: 200 | json }},
-      variants: [
-        {% for variant in product.variants %}
-        {
-          id: {{ variant.id | json }},
-          title: {{ variant.title | json }},
-          price: {{ variant.price | json }},
-          available: {{ variant.available | json }},
-          sku: {{ variant.sku | json }},
-          image: {{ variant.featured_image | image_url: width: 200 | default: '' | json }}
-        }{% unless forloop.last %},{% endunless %}
-        {% endfor %}
-      ],
-      selectedVariantId: {{ product.selected_or_first_available_variant.id | json }}
-    }{% else %}null{% endif %}
-  };
-</script>
-
-{{ 'quote-app.min.js' | asset_url | script_tag }}
-{{ 'quote-app.css' | asset_url | stylesheet_tag }}
+{% schema %}
+{
+  "name": "Quote App",
+  "target": "body",
+  "settings": []
+}
+{% endschema %}

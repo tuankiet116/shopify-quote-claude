@@ -23,6 +23,7 @@ export default defineConfig({
         },
     },
     server: {
-        origin: 'http://localhost:5173',
+        port: 3001,
+        cors: true,
     },
 });

@@ -12,63 +12,13 @@ class ShopifyAuthService
 
     private string $apiSecret;
 
-    private string $scopes;
-
-    private string $redirectUri;
-
     public function __construct()
     {
-        $this->apiKey      = config('shopify.api_key');
-        $this->apiSecret   = config('shopify.api_secret');
-        $this->scopes      = config('shopify.scopes');
-        $this->redirectUri = config('shopify.redirect_uri');
+        $this->apiKey    = config('shopify.api_key');
+        $this->apiSecret = config('shopify.api_secret');
     }
 
-    // === OAuth Authorization Code Grant ===
-
-    public function buildAuthUrl(string $shop, string $nonce): string
-    {
-        $params = http_build_query([
-            'client_id'    => $this->apiKey,
-            'scope'        => $this->scopes,
-            'redirect_uri' => $this->redirectUri,
-            'state'        => $nonce,
-        ]);
-
-        return "https://{$shop}/admin/oauth/authorize?{$params}";
-    }
-
-    public function verifyHmac(array $queryParams): bool
-    {
-        if (!isset($queryParams['hmac'])) {
-            return false;
-        }
-
-        $hmac = $queryParams['hmac'];
-        unset($queryParams['hmac']);
-
-        ksort($queryParams);
-
-        $message        = http_build_query($queryParams);
-        $calculatedHmac = hash_hmac('sha256', $message, $this->apiSecret);
-
-        return hash_equals($calculatedHmac, $hmac);
-    }
-
-    public function exchangeCodeForToken(string $shop, string $code): array
-    {
-        $response = Http::post("https://{$shop}/admin/oauth/access_token", [
-            'client_id'     => $this->apiKey,
-            'client_secret' => $this->apiSecret,
-            'code'          => $code,
-        ]);
-
-        $response->throw();
-
-        return $response->json();
-    }
-
-    // === Token Exchange (Embedded App) ===
+    // === Token Exchange (Embedded App — Managed Installation) ===
 
     public function decodeSessionToken(string $token): array
     {
