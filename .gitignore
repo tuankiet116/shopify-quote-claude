@@ -23,4 +23,4 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 frontend/node_modules
-*.toml
+shopify.app,toml
