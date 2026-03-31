@@ -1,56 +1,60 @@
 # CLAUDE.md - Project Instructions
 
 ## Project Overview
-Shopify embedded app scaffold. Laravel API backend + React SPA frontend + Theme Extension stub.
-Custom auth (no third-party Shopify packages). App Bridge 4 CDN for embedded context.
+Shopify embedded app — Quote/Báo giá. Laravel API backend + React SPA frontend + Theme Extension.
+Custom auth via managed installation + token exchange (no third-party Shopify packages).
 
 ## Architecture
-- `backend/` - Laravel API. Serves React SPA via Blade at `/app/*`. Handles OAuth + webhooks.
-- `frontend/` - React SPA. Built with Vite, output to `backend/public/build/`.
-- `storefront/` - Shopify Theme App Extension. Currently a stub.
+- `backend/` — Laravel 13 API. Serves React SPA via Blade. Handles webhooks + token exchange.
+- `frontend/` — React SPA. Vite build output to `backend/public/build/`. **See `frontend/CLAUDE.md` for UI component rules.**
+- `storefront/` — Shopify Theme App Extension (quote button + form).
+- `docker/` — Production Docker (multi-stage build, Supervisor, Nginx).
 - Monolith: frontend is served by backend, same domain.
 
+## Auth Flow (Managed Installation)
+1. Shopify handles install (scopes from `shopify.app.toml`)
+2. App loads in iframe → `EnsureShopifyEmbedded` middleware reads `id_token` from query
+3. First load: token exchange → save shop + access_token to DB
+4. API calls: frontend sends session token via `Authorization: Bearer` → `VerifyShopifySession` middleware verifies JWT + loads shop
+5. No OAuth redirect/callback routes — all auth is token-based
+
 ## Key Files
-- `backend/app/Services/Shopify/ShopifyAuthService.php` — All Shopify auth/verification logic
-- `backend/app/Http/Middleware/VerifyShopifySession.php` — JWT + Token Exchange + Developer bypass
-- `backend/app/Http/Controllers/Auth/ShopifyAuthController.php` — OAuth install flow
-- `backend/app/Exceptions/ApiException.php` — Single exception class for all API errors
-- `backend/bootstrap/app.php` — Exception handling with shop context logging
+- `backend/app/Http/Middleware/EnsureShopifyEmbedded.php` — Install check + token exchange on first load
+- `backend/app/Http/Middleware/VerifyShopifySession.php` — API auth (JWT verify + load shop)
+- `backend/app/Services/Shopify/ShopifyAuthService.php` — JWT decode, token exchange, webhook HMAC
+- `backend/app/Http/Controllers/WebhookController.php` — app/uninstalled handler
 - `frontend/src/api/client.ts` — API client (auto developer mode in Vite dev)
+- `storefront/shopify.app.toml` — App config (client_id, scopes, webhooks)
 
 ## Database
 - `shops` table: `shop` (domain), `access_token` (encrypted), `is_active`, `installed_at`, `uninstalled_at`
 
 ## API Response Format
 ```json
-// Success
 { "success": true, "data": { ... } }
-// Error
 { "success": false, "error": { "code": "error_code", "message": "..." } }
 ```
 
 ## Development
 
-### Local dev (developer mode)
+### Local dev
 ```bash
-cd backend && php artisan serve          # http://localhost:8000
-cd frontend && pnpm dev                  # Vite HMR at localhost:5173
+cd backend && php artisan serve --port=8001    # Backend
+cd frontend && npm run dev                      # Vite HMR at localhost:3001
 ```
-- `pnpm dev` → `import.meta.env.DEV === true` → auto appends `?scope=developer` to API calls
-- Backend bypasses JWT, loads shop from `SHOPIFY_DEV_SHOP_DOMAIN` env var
+- Nginx proxy: `https://quote-claude.local` → backend:8001 + frontend:3001
+- Developer mode: `?scope=developer` → bypass JWT, load from `SHOPIFY_DEV_SHOP_DOMAIN`
+- Standalone dev: `http://localhost:3001/build/` → mock Shopify context, Polaris React components
 
-### Embedded mode (Shopify admin)
-```bash
-ngrok http 8000                          # Expose backend
-# Set SHOPIFY_APP_URL in .env to ngrok URL
-cd frontend && pnpm build                # Build production assets
-```
+### Embedded mode (Shopify Admin)
+- Open app from Shopify Admin → loads via `https://quote-claude.local`
+- Uses Polaris Web Components (`<s-*>` tags)
 
 ## Conventions
 - Backend: Laravel conventions. `php artisan make:` commands.
 - API responses: `$this->success($data)` / throw `ApiException`
-- Frontend: Shopify Polaris components for UI. Pages organized as folders (`pages/home/`).
-- Each page folder has `PageName.tsx` + `components/` subdirectory.
+- Frontend: **Q* wrapper components** — auto-switch between Shopify Web Components (embedded) + Polaris React (standalone). See `frontend/CLAUDE.md`.
+- Pages: single file using Q* components (no separate Embedded/Standalone files needed).
 - All API routes: `/api/shopify/` prefix with session token auth.
 - Webhook routes: `/api/webhooks` with HMAC auth.
 
@@ -58,4 +62,4 @@ cd frontend && pnpm build                # Build production assets
 - Install shopify-laravel or other Shopify auth packages. Auth is custom.
 - Use Inertia.js. Frontend is a standalone React SPA served via Blade.
 - Add features without migrations. Database changes need proper migrations.
-- Use App Proxy. It has been intentionally removed from this project.
+- Import `@shopify/polaris` or use `<s-*>` tags directly in pages. Always use Q* wrapper components from `@/components/polaris`.

@@ -9,12 +9,9 @@ function useNavigationMenu() {
   useEffect(() => {
     if (import.meta.env.DEV) return;
 
-    const shopify = (window as any).shopify;
-    if (shopify?.navigationMenu) {
-      shopify.navigationMenu({
-        items: [{ label: 'Home', href: '/app' }],
-      });
-    }
+    window.shopify?.navigationMenu?.({
+      items: [{ label: 'Home', href: '/app' }],
+    });
   }, []);
 }
 
