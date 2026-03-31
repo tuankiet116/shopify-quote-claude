@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureShopifyEmbedded
+class EnsureShopifyInstalled
 {
     public function __construct(private ShopifyAuthService $authService) {}
 

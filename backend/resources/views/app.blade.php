@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="shopify-api-key" content="{{ config('shopify.api_key') }}" />
     <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
+    <script src="https://cdn.shopify.com/shopifycloud/polaris.js"></script>
     @if(app()->environment('local'))
         <script type="module">
             import RefreshRuntime from '/build/@@react-refresh';

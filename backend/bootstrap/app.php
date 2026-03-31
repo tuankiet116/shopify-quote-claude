@@ -1,7 +1,7 @@
 <?php
 
 use App\Exceptions\ApiException;
-use App\Http\Middleware\EnsureShopifyEmbedded;
+use App\Http\Middleware\EnsureShopifyInstalled;
 use App\Http\Middleware\VerifyShopifySession;
 use App\Http\Middleware\VerifyShopifyWebhook;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -25,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'verify.shopify.session' => VerifyShopifySession::class,
             'verify.shopify.webhook' => VerifyShopifyWebhook::class,
-            'ensure.shopify.embedded' => EnsureShopifyEmbedded::class,
+            'ensure.shopify.installed' => EnsureShopifyInstalled::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

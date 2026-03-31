@@ -1,17 +1,38 @@
-import { Outlet } from 'react-router-dom';
-import { Frame } from '@shopify/polaris';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Frame, Navigation } from '@shopify/polaris';
+import { HomeIcon } from '@shopify/polaris-icons';
 import { useIsEmbedded } from '@/hooks/useIsEmbedded';
+
+function StandaloneNavigation() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  return (
+    <Navigation location={location.pathname}>
+      <Navigation.Section
+        items={[
+          {
+            label: 'Home',
+            icon: HomeIcon,
+            url: '/',
+            selected: location.pathname === '/',
+            onClick: () => navigate('/'),
+          },
+        ]}
+      />
+    </Navigation>
+  );
+}
 
 export default function AppLayout() {
   const isEmbedded = useIsEmbedded();
 
-  // When embedded in Shopify Admin, don't use Frame — Admin provides its own chrome
   if (isEmbedded) {
     return <Outlet />;
   }
 
   return (
-    <Frame>
+    <Frame navigation={<StandaloneNavigation />}>
       <Outlet />
     </Frame>
   );

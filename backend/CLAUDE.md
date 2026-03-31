@@ -24,7 +24,7 @@ backend/
 │   │   │   ├── Controller.php         # Base: shop(), success(), created()
 │   │   │   └── WebhookController.php  # Webhook routing (app/uninstalled)
 │   │   └── Middleware/
-│   │       ├── EnsureShopifyEmbedded.php   # Install check + token exchange + CSP
+│   │       ├── EnsureShopifyInstalled.php   # Install check + token exchange + CSP
 │   │       ├── VerifyShopifySession.php    # API auth: JWT verify + load shop
 │   │       └── VerifyShopifyWebhook.php   # Webhook HMAC verify
 │   ├── Models/
@@ -55,7 +55,7 @@ backend/
 
 | Alias | Class | Dùng cho | Chức năng |
 |-------|-------|----------|-----------|
-| `ensure.shopify.embedded` | `EnsureShopifyEmbedded` | Web routes (`/`, `/app/*`) | Lấy `id_token` từ query → token exchange nếu chưa install → set CSP header |
+| `ensure.shopify.installed` | `EnsureShopifyInstalled` | Web routes (`/`, `/app/*`) | Lấy `id_token` từ query → token exchange nếu chưa install → set CSP header |
 | `verify.shopify.session` | `VerifyShopifySession` | API routes (`/api/shopify/*`) | Verify JWT Bearer token → load shop từ DB → set `shopifyShop` attribute |
 | `verify.shopify.webhook` | `VerifyShopifyWebhook` | Webhook route (`/api/webhooks`) | Verify HMAC-SHA256 → set `shopifyDomain` + `webhookTopic` attributes |
 
@@ -68,8 +68,8 @@ Khi `APP_ENV=local` và request có `?scope=developer`:
 
 ### Web (routes/web.php)
 ```
-GET /          → app.blade.php   [ensure.shopify.embedded]
-GET /app/{any} → app.blade.php   [ensure.shopify.embedded]
+GET /          → app.blade.php   [ensure.shopify.installed]
+GET /app/{any} → app.blade.php   [ensure.shopify.installed]
 ```
 
 ### API (routes/api.php)

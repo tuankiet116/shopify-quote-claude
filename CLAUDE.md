@@ -13,13 +13,13 @@ Custom auth via managed installation + token exchange (no third-party Shopify pa
 
 ## Auth Flow (Managed Installation)
 1. Shopify handles install (scopes from `shopify.app.toml`)
-2. App loads in iframe → `EnsureShopifyEmbedded` middleware reads `id_token` from query
+2. App loads in iframe → `EnsureShopifyInstalled` middleware reads `id_token` from query
 3. First load: token exchange → save shop + access_token to DB
 4. API calls: frontend sends session token via `Authorization: Bearer` → `VerifyShopifySession` middleware verifies JWT + loads shop
 5. No OAuth redirect/callback routes — all auth is token-based
 
 ## Key Files
-- `backend/app/Http/Middleware/EnsureShopifyEmbedded.php` — Install check + token exchange on first load
+- `backend/app/Http/Middleware/EnsureShopifyInstalled.php` — Install check + token exchange on first load
 - `backend/app/Http/Middleware/VerifyShopifySession.php` — API auth (JWT verify + load shop)
 - `backend/app/Services/Shopify/ShopifyAuthService.php` — JWT decode, token exchange, webhook HMAC
 - `backend/app/Http/Controllers/WebhookController.php` — app/uninstalled handler
