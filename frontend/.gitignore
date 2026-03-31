@@ -8,3 +8,7 @@ dist
 Thumbs.db
 /.idea
 /.vscode
+e2e/.auth/
+e2e/.profile/
+test-results/
+playwright-report/

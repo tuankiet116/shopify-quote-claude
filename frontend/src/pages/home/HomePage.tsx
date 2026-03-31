@@ -28,15 +28,15 @@ export default function HomePage() {
 
         <QSection heading="What this app does">
           <QBlockStack gap="200">
-            <QInlineStack gap="200" blockAlign="center">
+            <QInlineStack gap="200" blockAlign="center" align="start">
               <QIcon source={OrderIcon} name="order" />
               <QText>Customers request quotes directly from your store</QText>
             </QInlineStack>
-            <QInlineStack gap="200" blockAlign="center">
+            <QInlineStack gap="200" blockAlign="center" align="start">
               <QIcon source={EmailIcon} name="email" />
               <QText>You receive and manage all quote requests in one place</QText>
             </QInlineStack>
-            <QInlineStack gap="200" blockAlign="center">
+            <QInlineStack gap="200" blockAlign="center" align="start">
               <QIcon source={CheckCircleIcon} name="check-circle" />
               <QText>Send professional quotes and convert them to orders</QText>
             </QInlineStack>
