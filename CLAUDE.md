@@ -63,3 +63,4 @@ cd frontend && npm run dev                      # Vite HMR at localhost:3001
 - Use Inertia.js. Frontend is a standalone React SPA served via Blade.
 - Add features without migrations. Database changes need proper migrations.
 - Import `@shopify/polaris` or use `<s-*>` tags directly in pages. Always use Q* wrapper components from `@/components/polaris`.
+- Không được thêm mô tả tính năng và các file Claude.nd

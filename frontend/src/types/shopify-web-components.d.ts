@@ -60,7 +60,8 @@ declare module 'react' {
         accessibilityLabel?: string;
       };
       's-button-group': SBaseProps;
-      's-link': SBaseProps & { href?: string; target?: string };
+      's-link': SBaseProps & { href?: string; target?: string; rel?: string };
+      's-app-nav': SBaseProps;
       's-clickable': SBaseProps;
       's-clickable-chip': SBaseProps;
       's-menu': SBaseProps;
@@ -117,8 +118,20 @@ declare module 'react' {
         label?: string;
         name?: string;
         value?: string;
+        placeholder?: string;
         disabled?: boolean;
+        required?: boolean;
         error?: string;
+        details?: string;
+        icon?: string;
+      };
+      's-option': SBaseProps & {
+        value?: string;
+        selected?: boolean;
+        disabled?: boolean;
+      };
+      's-option-group': SBaseProps & {
+        label?: string;
       };
       's-checkbox': SBaseProps & {
         label?: string;
@@ -135,6 +148,7 @@ declare module 'react' {
         label?: string;
         name?: string;
         value?: string;
+        disabled?: boolean;
       };
       's-color-picker': SBaseProps;
       's-date-field': SBaseProps & {

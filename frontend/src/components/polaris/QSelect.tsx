@@ -38,9 +38,9 @@ export function QSelect({ label, options, value, onChange, placeholder, disabled
   if (isEmbedded) {
     return (
       <s-select ref={ref} label={label} value={value} name={name} disabled={disabled || undefined}>
-        {placeholder && <option value="">{placeholder}</option>}
+        {placeholder && <s-option value="">{placeholder}</s-option>}
         {options.map(opt => (
-          <option key={opt.value} value={opt.value}>{opt.label}</option>
+          <s-option key={opt.value} value={opt.value}>{opt.label}</s-option>
         ))}
       </s-select>
     );

@@ -14,7 +14,9 @@ api_version = "2026-01"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_products,write_draft_orders"
+scopes = "read_themes,read_products,write_draft_orders"
 
 [auth]
 redirect_urls = [ "https://quote-claude.local" ]
+
+extension_directories = [ "extensions/quote-storefront" ]

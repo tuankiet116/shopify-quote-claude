@@ -8,7 +8,7 @@ export default defineConfig({
             formats: ['iife'],
             fileName: () => 'quote-app.min.js',
         },
-        outDir: 'extension/assets',
+        outDir: 'extensions/quote-storefront/assets',
         emptyOutDir: false,
         minify: true,
     },

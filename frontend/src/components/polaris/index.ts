@@ -36,3 +36,12 @@ export type { QSpinnerProps } from './QSpinner';
 
 export { QModal } from './QModal';
 export type { QModalProps } from './QModal';
+
+export { QCheckbox } from './QCheckbox';
+export type { QCheckboxProps } from './QCheckbox';
+
+export { QColorField } from './QColorField';
+export type { QColorFieldProps } from './QColorField';
+
+export { QAppNav } from './QAppNav';
+export type { QAppNavProps, QAppNavItem } from './QAppNav';

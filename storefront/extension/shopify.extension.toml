@@ -1,6 +1,0 @@
-api_version = "2025-07"
-
-[[extensions]]
-type = "theme"
-name = "Quote Storefront"
-handle = "quote-storefront"

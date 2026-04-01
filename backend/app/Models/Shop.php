@@ -3,9 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Shop extends Model
 {
+    public function buttonSetting(): HasOne
+    {
+        return $this->hasOne(ButtonSetting::class);
+    }
+
     protected $fillable = [
         'shop',
         'access_token',

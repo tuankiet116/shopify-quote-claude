@@ -1,0 +1,26 @@
+{% assign settings = shop.metafields.quote_app.button_settings.value %}
+
+{% if settings != blank and settings.is_enabled %}
+  <script type="application/json" id="quote-app-config">
+    {
+      "pageType": "{{ request.page_type }}",
+      "is_enabled": {{ settings.is_enabled | json }},
+      "show_on_product": {{ settings.show_on_product | json }},
+      "show_on_collection": {{ settings.show_on_collection | json }},
+      "show_on_search": {{ settings.show_on_search | json }},
+      "show_on_home": {{ settings.show_on_home | json }},
+      "appearance": {{ settings.appearance | json }}
+    }
+  </script>
+
+  {{ 'quote-app.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'quote-app.min.js' | asset_url }}" defer></script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Quote Button",
+  "target": "body",
+  "settings": []
+}
+{% endschema %}

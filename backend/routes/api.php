@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ButtonSettingController;
 use App\Http\Controllers\WebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,9 @@ Route::middleware(['verify.shopify.session'])->prefix('shopify')->group(function
             ],
         ]);
     });
+
+    Route::get('button-settings', [ButtonSettingController::class, 'show']);
+    Route::put('button-settings', [ButtonSettingController::class, 'update']);
 });
 
 // Webhooks (HMAC verified)
