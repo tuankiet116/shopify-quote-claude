@@ -7,9 +7,22 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   fullyParallel: false,
   retries: 0,
-  reporter: 'html',
+  reporter: 'list',
   use: {
+    baseURL: 'http://localhost:3001/build/',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+  },
+  projects: [
+    {
+      name: 'standalone',
+      use: { browserName: 'chromium' },
+    },
+  ],
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:3001/build/',
+    reuseExistingServer: true,
+    timeout: 30_000,
   },
 });

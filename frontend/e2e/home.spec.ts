@@ -31,8 +31,18 @@ test.describe('Home page', () => {
     ).toBeVisible();
   });
 
-  test('has start setup button', async ({ page }) => {
+  test('has start setup button that is not full width', async ({ page }) => {
     const button = page.getByRole('button', { name: 'Start setup' });
     await expect(button).toBeVisible();
+    await expect(button).toBeEnabled();
+
+    // Button should not be full width - it should be narrower than the page content
+    const buttonBox = await button.boundingBox();
+    const appContainer = page.locator('#app');
+    const appBox = await appContainer.boundingBox();
+
+    expect(buttonBox).toBeTruthy();
+    expect(appBox).toBeTruthy();
+    expect(buttonBox!.width).toBeLessThan(appBox!.width * 0.5);
   });
 });

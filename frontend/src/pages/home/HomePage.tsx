@@ -48,9 +48,11 @@ export default function HomePage() {
             <QText as="p" tone="subdued">
               Set up your quote form and start receiving requests from customers.
             </QText>
-            <QButton variant="primary" onClick={handleGetStarted}>
-              Start setup
-            </QButton>
+            <QInlineStack>
+              <QButton variant="primary" onClick={handleGetStarted}>
+                Start setup
+              </QButton>
+            </QInlineStack>
           </QBlockStack>
         </QSection>
       </QBlockStack>
