@@ -5,6 +5,8 @@ import en from '@shopify/polaris/locales/en.json';
 import AppLayout from './layouts/AppLayout';
 import HomePage from './pages/home/HomePage';
 import ButtonSettingsPage from './pages/settings/ButtonSettingsPage';
+import QuotesPage from './pages/quotes/QuotesPage';
+import QuoteDetailPage from './pages/quotes/QuoteDetailPage';
 
 const basename = window.location.pathname.startsWith('/build') ? '/build' : '';
 
@@ -37,6 +39,8 @@ export default function App() {
           <Route path="/" element={<AppLayout />}>
             <Route index element={<HomePage />} />
             <Route path="/settings/button" element={<ButtonSettingsPage />} />
+            <Route path="/quotes" element={<QuotesPage />} />
+            <Route path="/quotes/:id" element={<QuoteDetailPage />} />
           </Route>
         </Routes>
       </AppProvider>

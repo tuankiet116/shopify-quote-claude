@@ -52,6 +52,9 @@
 
 .quote-btn-container {
     margin: 10px 0;
+    position: relative;
+    z-index: 1;
+    pointer-events: auto;
 }
 
 /* === Quantity Selector === */
@@ -152,6 +155,12 @@
 
 .quote-drawer-container--open {
     display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9998;
 }
 
 .quote-drawer-overlay {
@@ -510,4 +519,32 @@
     .quote-floating-btn--bottom-left {
         left: 16px;
     }
+}
+
+/* === Honeypot (hidden from users) === */
+.quote-honeypot {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+/* === Drawer Animation === */
+@keyframes quoteDrawerSlideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.quote-drawer-container--open .quote-drawer {
+    animation: quoteDrawerSlideIn 0.3s ease;
+}
+
+@keyframes quoteOverlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.quote-drawer-container--open .quote-drawer-overlay {
+    animation: quoteOverlayFadeIn 0.3s ease;
 }

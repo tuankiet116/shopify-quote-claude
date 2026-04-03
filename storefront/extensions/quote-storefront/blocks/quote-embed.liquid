@@ -4,12 +4,20 @@
   <script type="application/json" id="quote-app-config">
     {
       "pageType": "{{ request.page_type }}",
+      "shopDomain": "{{ shop.permanent_domain }}",
+      "apiUrl": "{{ shop.metafields.quote_app.api_url.value | default: 'https://quote-claude.local' }}",
+      "storefrontAccessToken": "{{ shop.metafields.quote_app.storefront_token.value | default: '' }}",
+      "country": "{{ localization.country.iso_code }}",
+      "language": "{{ request.locale.iso_code | upcase }}",
       "is_enabled": {{ settings.is_enabled | json }},
       "show_on_product": {{ settings.show_on_product | json }},
       "show_on_collection": {{ settings.show_on_collection | json }},
       "show_on_search": {{ settings.show_on_search | json }},
       "show_on_home": {{ settings.show_on_home | json }},
       "appearance": {{ settings.appearance | json }}
+      {% if request.page_type == 'product' %}
+      ,"productHandle": {{ product.handle | json }}
+      {% endif %}
     }
   </script>
 

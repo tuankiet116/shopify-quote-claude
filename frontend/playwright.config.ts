@@ -12,11 +12,20 @@ export default defineConfig({
     baseURL: 'http://localhost:3001/build/',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    ignoreHTTPSErrors: true,
   },
   projects: [
     {
       name: 'standalone',
-      use: { browserName: 'chromium' },
+      use: {
+        browserName: 'chromium',
+        launchOptions: {
+          args: [
+            '--disable-web-security',
+            '--ignore-certificate-errors',
+          ],
+        },
+      },
     },
   ],
   webServer: {
